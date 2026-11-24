@@ -1,0 +1,19 @@
+{
+  "parts": [
+    { "id": "head_square",  "slot": "head",  "name": "Cabeza cuadrada", "sprite": "head_square",  "mods": { "hp": 10, "resistance": 0.05 } },
+    { "id": "head_eye",     "slot": "head",  "name": "Ojo saltón",      "sprite": "head_eye",     "mods": { "hp": -10, "damage": 0.15 } },
+    { "id": "head_bolts",   "slot": "head",  "name": "Cabeza de tornillos", "sprite": "head_bolts", "mods": { "damage": 0.05, "mobility": 5 } },
+
+    { "id": "torso_stitched", "slot": "torso", "name": "Torso costurado", "sprite": "torso_stitched", "mods": { "hp": 40, "mobility": -10 } },
+    { "id": "torso_tesla",    "slot": "torso", "name": "Torso Tesla",     "sprite": "torso_tesla",    "mods": { "hp": 10, "damage": 0.10 } },
+    { "id": "torso_light",    "slot": "torso", "name": "Torso ligero",    "sprite": "torso_light",    "mods": { "hp": -10, "mobility": 15 } },
+
+    { "id": "arms_cannon",  "slot": "arms", "name": "Brazo cañón",   "sprite": "arms_cannon",  "weapon": "cannon",  "mods": {} },
+    { "id": "arms_grenade", "slot": "arms", "name": "Brazo granada", "sprite": "arms_grenade", "weapon": "grenade", "mods": { "mobility": -5 } },
+    { "id": "arms_bolt",    "slot": "arms", "name": "Brazo rayo",    "sprite": "arms_bolt",    "weapon": "bolt",    "mods": { "damage": -0.05 } },
+
+    { "id": "legs_spring", "slot": "legs", "name": "Piernas de resorte", "sprite": "legs_spring", "mods": { "hp": -10, "mobility": 30 } },
+    { "id": "legs_iron",   "slot": "legs", "name": "Piernas de hierro",  "sprite": "legs_iron",   "mods": { "resistance": 0.10, "mobility": -15 } },
+    { "id": "legs_plain",  "slot": "legs", "name": "Piernas normales",   "sprite": "legs_plain",  "mods": {} }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "cannon":  { "name": "Cañón",   "damage": 30, "radius": 40, "gravity": 1.0, "windFactor": 1.0, "bounces": 0 },
+  "grenade": { "name": "Granada", "damage": 25, "radius": 55, "gravity": 1.0, "windFactor": 0.5, "bounces": 2 },
+  "bolt":    { "name": "Rayo",    "damage": 22, "radius": 30, "gravity": 0.3, "windFactor": 0.0, "bounces": 0 }
+}
