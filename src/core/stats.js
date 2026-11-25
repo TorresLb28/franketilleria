@@ -1,30 +1,30 @@
 import { BASE_STATS, LIMITS, STAT_DECIMALS } from './constants.js';
 
+const STAT_LIMITS = Object.freeze({
+  hp: { min: LIMITS.hpMin },
+  mobility: { min: LIMITS.mobilityMin },
+  resistance: { max: LIMITS.resistanceMax },
+  damage: { min: LIMITS.damageMin }
+});
+
+const applyLimit = ({ min = -Infinity, max = Infinity }, value) =>
+  Math.min(max, Math.max(min, value));
+
 /**
  * @param {Array<{slot: string, mods?: Object<string, number>}>} parts
  * @returns {{hp: number, mobility: number, resistance: number, damage: number}}
  */
 export function computeStats(parts) {
-  const stats = { ...BASE_STATS };
+  const totalFor = (stat) =>
+    parts.reduce((sum, part) => {
+      const mods = part.mods ?? {};
+      return sum + (Object.hasOwn(mods, stat) ? mods[stat] : 0);
+    }, BASE_STATS[stat]);
 
-  for (const part of parts) {
-    if (!part.mods) continue;
-
-    for (const [stat, value] of Object.entries(part.mods)) {
-      if (Object.hasOwn(BASE_STATS, stat)) {
-        stats[stat] += value;
-      }
-    }
-  }
-
-  const rounded = Object.fromEntries(
-    Object.entries(stats).map(([stat, value]) => [stat, Number(value.toFixed(STAT_DECIMALS))])
+  return Object.fromEntries(
+    Object.keys(BASE_STATS).map((stat) => {
+      const total = Number(totalFor(stat).toFixed(STAT_DECIMALS));
+      return [stat, applyLimit(STAT_LIMITS[stat], total)];
+    })
   );
-
-  return {
-    hp: Math.max(LIMITS.hpMin, rounded.hp),
-    mobility: Math.max(LIMITS.mobilityMin, rounded.mobility),
-    resistance: Math.min(LIMITS.resistanceMax, rounded.resistance),
-    damage: Math.max(LIMITS.damageMin, rounded.damage)
-  };
 }
