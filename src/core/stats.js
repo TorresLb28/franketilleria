@@ -1,10 +1,30 @@
-// Edgar: final stats of a creature from its parts.
-// Work in tests/stats.test.js first (remove .skip), then implement here.
+import { BASE_STATS, LIMITS, STAT_DECIMALS } from './constants.js';
+
+const STAT_LIMITS = Object.freeze({
+  hp: Object.freeze({ min: LIMITS.hpMin }),
+  mobility: Object.freeze({ min: LIMITS.mobilityMin }),
+  resistance: Object.freeze({ max: LIMITS.resistanceMax }),
+  damage: Object.freeze({ min: LIMITS.damageMin })
+});
+
+const applyLimit = ({ min = -Infinity, max = Infinity }, value) =>
+  Math.min(max, Math.max(min, value));
 
 /**
  * @param {Array<{slot: string, mods?: Object<string, number>}>} parts
  * @returns {{hp: number, mobility: number, resistance: number, damage: number}}
  */
 export function computeStats(parts) {
-  throw new Error('not implemented');
+  const totalFor = (stat) =>
+    parts.reduce((sum, part) => {
+      const mods = part.mods ?? {};
+      return sum + (Object.hasOwn(mods, stat) ? mods[stat] : 0);
+    }, BASE_STATS[stat]);
+
+  return Object.fromEntries(
+    Object.keys(BASE_STATS).map((stat) => {
+      const total = Number(totalFor(stat).toFixed(STAT_DECIMALS));
+      return [stat, applyLimit(STAT_LIMITS[stat], total)];
+    })
+  );
 }
