@@ -49,3 +49,14 @@ Qué cambié yo a mano: activé los tests, implementé `calcDamage`, `nextWind`,
 Resultado: 51 tests en 7 suites + lint + build en verde y PR edgar/battle-core
 Lo que aprendí: un orquestador puro solo compone reglas ya probadas; cuando el estado tiene `alive` y `hp`, hay que convertir esa bandera antes de delegar al módulo que decide por vida.
 Qué sigue: E4 simulación headless de una pelea completa y entrega de contratos al equipo.
+
+---
+## E4 simulación headless de combate completo 2026-11-25
+Técnica de prompting: simulación determinista con rng inyectado, verificación de invariantes y revisión con @code-reviewer
+Prompts usados: 4 (implementación, corrección del caso de empate, cierre de hallazgos y registro en bitácora)
+Qué falló o faltó: inicialmente `tests/sim.test.js` importó `data/*.json` y comparó la referencia base del estado ajustado en el caso de empate; tras detectar la regla de frontera de `AGENTS.md §5` con `@code-reviewer`, se migró a fixtures inline inmutables como el resto de pruebas de `core`.
+Qué cambié yo a mano: validación end-to-end de combate determinista hasta ganador y empate simultáneo con verificación de ausencia de `NaN` e inmutabilidad de estados y fixtures en `tests/sim.test.js`.
+Resultado: 53 tests en 8 suites + lint + build en verde y PR `edgar/battle-sim`.
+Lo que aprendí: las fixtures inline desacoplan la simulación del rebalanceo y los snapshots defensivos detectan mutaciones incluso en estados intermedios.
+Qué sigue: revisión de PRs de Mike y Debanhi e integración final del juego.
+
