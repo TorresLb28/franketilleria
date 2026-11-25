@@ -8,14 +8,14 @@ const partsData = {
     { id: 't1', slot: 'torso', mods: { hp: 20 } },
     { id: 'a1', slot: 'arms', weapon: 'gun', mods: {} },
     { id: 'a2', slot: 'arms', weapon: 'missing', mods: {} },
+    { id: 'a3', slot: 'arms', mods: {} },
     { id: 'l1', slot: 'legs', mods: { mobility: 10 } }
   ]
 };
 const weaponsData = { gun: { damage: 30, radius: 40 } };
 const ids = { head: 'h1', torso: 't1', arms: 'a1', legs: 'l1' };
 
-// TODO(edgar): remove .skip on your branch to start the red phase.
-describe.skip('buildCreature', () => {
+describe('buildCreature', () => {
   it('devuelve stats combinadas y el arma de los brazos', () => {
     const c = buildCreature(ids, partsData, weaponsData);
     expect(c.stats.hp).toBe(130);
@@ -39,5 +39,21 @@ describe.skip('buildCreature', () => {
 
   it('lanza error si el arma de los brazos no existe', () => {
     expect(() => buildCreature({ ...ids, arms: 'a2' }, partsData, weaponsData)).toThrow(/weapon/i);
+  });
+
+  it('devuelve las piezas en el orden exacto aunque partIds llegue desordenado', () => {
+    const unorderedIds = { legs: ids.legs, arms: ids.arms, torso: ids.torso, head: ids.head };
+    const c = buildCreature(unorderedIds, partsData, weaponsData);
+    expect(c.parts.map(({ slot }) => slot)).toEqual(['head', 'torso', 'arms', 'legs']);
+  });
+
+  it('lanza error claro si partIds es nulo o indefinido', () => {
+    expect(() => buildCreature(null, partsData, weaponsData)).toThrow('partIds is required');
+    expect(() => buildCreature(undefined, partsData, weaponsData)).toThrow('partIds is required');
+  });
+
+  it('lanza error si la pieza de arms no define weapon', () => {
+    expect(() => buildCreature({ ...ids, arms: 'a3' }, partsData, weaponsData))
+      .toThrow('Missing weapon for arms part: a3');
   });
 });

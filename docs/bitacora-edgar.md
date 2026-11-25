@@ -30,3 +30,13 @@ Resultado: 9 tests de stats en verde; cierre verificado con npm test, npm run li
 Lo que aprendí: Object.hasOwn evita mods desconocidos sin mutar BASE_STATS, y una tabla congelada necesita congelar también sus objetos internos.
 Qué sigue: E2 buildCreature.
 
+---
+## E2 buildCreature 2026-11-25
+Técnica de prompting: TDD con skill tdd-cycle (rojo, verde, refactor) y revisión con @code-reviewer
+Prompts usados: 4 (plan de contrato, implementación, edge cases y cierre de bitácora)
+Qué falló o faltó: se detectó discrepancia de firma en Plan antes de escribir código y se validaron edge cases de `partIds` nulo y `weapon` ausente.
+Qué cambié yo a mano: activé los tests, implementé buildCreature con SLOTS y computeStats, añadí validaciones de partIds y weapon, cloné piezas/armas devueltas y limpié el bloque @Author del test.
+Resultado: 24 tests + lint + build en verde; PR edgar/build-creature
+Lo que aprendí: validar la frontera de entrada con mensajes concretos evita TypeError opacos y mantiene estable el contrato Lab -> Battle.
+Qué sigue: E3 `src/core/battle.js`.
+
