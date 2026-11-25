@@ -41,8 +41,9 @@ follow the rule and tell the user why. When the user and `docs/design.md` disagr
 | Person | Area | Paths |
 |---|---|---|
 | Edgar | Core logic and tests | `src/core/`, `tests/`, `scripts/` |
-| Mike | Laboratory, data and part art | `src/scenes/LabScene.js`, `data/`, `assets/sprites/` |
-| Debanhi | Combat, terrain, HUD and effects | `src/scenes/BattleScene.js`, `assets/audio/` |
+| Mike | Laboratory, data and part art | `src/scenes/LabScene.js`, `data/`, `public/assets/sprites/` |
+| Mike | UI | `src/ui/` |
+| Debanhi | Combat, terrain, HUD and effects | `src/scenes/BattleScene.js`, `public/assets/audio/`, `public/assets/backgrounds/` |
 
 Shared files (`src/main.js`, `src/core/constants.js`, `docs/design.md`, config files) need a
 heads-up to the team before changing. If it is unclear whose task you are doing, ask which

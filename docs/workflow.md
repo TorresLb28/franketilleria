@@ -26,5 +26,7 @@ quita el `.skip` en tu rama (fase roja), implementa (fase verde) y abre el PR cu
 avisen al equipo antes de cambiarlos.
 
 ## Evidencia para el reporte
-Anota en `docs/bitacora.md` cada iteración importante con la IA. Toma capturas del código clave
-y del juego conforme avanzan, no al final. Licencias de arte y sonido en `docs/credits.md`.
+Cada integrante anota en su propio archivo: `docs/bitacora-edgar.md`, `docs/bitacora-mike.md` o
+`docs/bitacora-debanhi.md`. La plantilla común queda en `docs/bitacora.md`. Toma capturas del
+código clave y del juego conforme avanzan, no al final. Licencias de arte y sonido en
+`docs/credits.md`.
