@@ -1,10 +1,10 @@
 import { BASE_STATS, LIMITS, STAT_DECIMALS } from './constants.js';
 
 const STAT_LIMITS = Object.freeze({
-  hp: { min: LIMITS.hpMin },
-  mobility: { min: LIMITS.mobilityMin },
-  resistance: { max: LIMITS.resistanceMax },
-  damage: { min: LIMITS.damageMin }
+  hp: Object.freeze({ min: LIMITS.hpMin }),
+  mobility: Object.freeze({ min: LIMITS.mobilityMin }),
+  resistance: Object.freeze({ max: LIMITS.resistanceMax }),
+  damage: Object.freeze({ min: LIMITS.damageMin })
 });
 
 const applyLimit = ({ min = -Infinity, max = Infinity }, value) =>

@@ -1,14 +1,7 @@
-/**
- * @Author: Your name
- * @Date:   2026-11-24 18:07:08
- * @Last Modified by:   Your name
- * @Last Modified time: 2026-11-25 00:12:30
- */
 import { describe, it, expect } from 'vitest';
 import { computeStats } from '../src/core/stats.js';
 import { BASE_STATS } from '../src/core/constants.js';
 
-// TODO(edgar): remove .skip on your branch to start the red phase.
 describe('computeStats', () => {
   it('sin partes devuelve las estadísticas base', () => {
     expect(computeStats([])).toEqual(BASE_STATS);
