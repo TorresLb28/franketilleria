@@ -65,6 +65,10 @@ más de 15% del promedio. Meta: ninguna combinación gana siempre.
 | Se acaban los 8 s de movimiento | Pasa a la fase de ataque; si no dispara en 15 s, pierde el turno |
 | Jugador sin vida | `TurnManager` lo salta; si queda uno vivo, gana |
 
+## Controles y fases
+- Fase de movimiento: 8 segundos con flechas o A y D; Enter termina antes.
+- Fase de ataque: 15 segundos; mouse o flechas arriba y abajo para apuntar, mantener Espacio para la potencia y soltar para disparar.
+
 ## Terreno
 Fase 1: terreno fijo guardado como bitmask (canvas offscreen, pixel opaco = sólido).
 Fase 2 (si hay tiempo): destruir un círculo del bitmask en cada explosión.
@@ -78,6 +82,17 @@ Cañón (parábola directa), Granada (rebota 2 veces), Rayo (casi recto, ignora 
 - `damage.js`: `calcDamage({ weapon, attackerStats, targetStats, distance })`
 - `turns.js`: `TurnManager` (turno actual, avanzar, vivos, ganador, empate)
 - `wind.js`: `nextWind(rng)`
+
+## Contrato de funciones de core
+- `computeStats(parts)` devuelve `{ hp, mobility, resistance, damage }`.
+- `buildCreature(partIds, partsData, weaponsData)` devuelve `{ stats, weapon, parts }`.
+- `calcDamage({ weapon, attackerStats, targetStats, distance })` devuelve un entero mayor o igual a 0 redondeado con `Math.round`.
+- `new TurnManager(players)` recibe `players = [{ name, hp }]` y expone `current`, `alive`, `isOver`, `winner`, `isDraw` y el método `next()`.
+- `nextWind(rng)` devuelve un entero de -10 a 10.
+
+## Archivos de la capa visual
+- `src/ui/creatureView.js` (Mike): `createCreatureView(scene, parts, x, y, scale)` y `setFacing(view, dir)`.
+- `src/scenes/battleConfig.js` (Debanhi): constantes de física del combate.
 
 ## Diagrama del turno
 ```mermaid
