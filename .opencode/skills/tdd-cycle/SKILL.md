@@ -1,13 +1,17 @@
 ---
 name: tdd-cycle
-description: Flujo de TDD del proyecto para funciones de src/core. Úsalo al implementar lógica nueva.
+description: TDD workflow for src/core features in FrankenTillería (red, green, refactor with skipped pending tests).
 ---
-# Ciclo TDD
+# TDD cycle
 
-1. Rojo: pide al agente `tdd-tester` (o escribe tú) tests en `tests/` basados en `docs/design.md`. Corre `npm test` y confirma que fallan por la razón correcta.
-2. Verde: implementa lo mínimo en `src/core/` para que pasen. Nada de extras.
-3. Refactor: limpia nombres y duplicación, corre `npm test` otra vez.
-4. Registra en `docs/bitacora.md` qué prompt usaste y qué corregiste.
-5. Haz commit con mensaje `test:` para el rojo y `feat:` para el verde.
+0. Branch: `git switch -c <name>/<feature>` from an up-to-date `main`.
+1. **Red.** Pending features have their tests under `describe.skip`. Remove `.skip`
+   (or ask the `tdd-tester` subagent for more tests), run `npm test`, and confirm the tests
+   fail for the right reason. Commit as `test: ...`.
+2. **Green.** Implement the minimum in `src/core/` to pass. No extra features. Commit as `feat: ...`.
+3. **Refactor.** Improve names and remove duplication. Run `npm run lint` and `npm test`.
+4. Run the `code-reviewer` subagent, then open the pull request. Never open it with failing tests.
+5. Add an entry to `docs/bitacora.md` (prompt, result, correction).
 
-Reglas: `core` no importa Phaser; un comportamiento por test; no cambies un test para que pase, cambia el código.
+Rules: `core` never imports Phaser; one behavior per test; never edit a test just to make it pass,
+fix the code instead.

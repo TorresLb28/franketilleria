@@ -1,6 +1,4 @@
-// Edgar: viento aleatorio por turno, con generador de números inyectable (para poder probarlo).
-import { TURN } from './constants.js';
-
+// Edgar: random wind per turn. The rng is injected so the function can be tested.
 export function nextWind(rng = Math.random) {
   throw new Error('not implemented');
 }
