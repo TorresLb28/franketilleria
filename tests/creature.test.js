@@ -1,3 +1,9 @@
+/**
+ * @Author: Your name
+ * @Date:   2026-11-24 18:07:08
+ * @Last Modified by:   Your name
+ * @Last Modified time: 2026-11-25 00:57:17
+ */
 import { describe, it, expect } from 'vitest';
 import { buildCreature } from '../src/core/creature.js';
 
@@ -14,8 +20,7 @@ const partsData = {
 const weaponsData = { gun: { damage: 30, radius: 40 } };
 const ids = { head: 'h1', torso: 't1', arms: 'a1', legs: 'l1' };
 
-// TODO(edgar): remove .skip on your branch to start the red phase.
-describe.skip('buildCreature', () => {
+describe('buildCreature', () => {
   it('devuelve stats combinadas y el arma de los brazos', () => {
     const c = buildCreature(ids, partsData, weaponsData);
     expect(c.stats.hp).toBe(130);
