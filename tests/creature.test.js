@@ -1,9 +1,3 @@
-/**
- * @Author: Your name
- * @Date:   2026-11-24 18:07:08
- * @Last Modified by:   Your name
- * @Last Modified time: 2026-11-25 00:57:17
- */
 import { describe, it, expect } from 'vitest';
 import { buildCreature } from '../src/core/creature.js';
 
@@ -14,6 +8,7 @@ const partsData = {
     { id: 't1', slot: 'torso', mods: { hp: 20 } },
     { id: 'a1', slot: 'arms', weapon: 'gun', mods: {} },
     { id: 'a2', slot: 'arms', weapon: 'missing', mods: {} },
+    { id: 'a3', slot: 'arms', mods: {} },
     { id: 'l1', slot: 'legs', mods: { mobility: 10 } }
   ]
 };
@@ -44,5 +39,21 @@ describe('buildCreature', () => {
 
   it('lanza error si el arma de los brazos no existe', () => {
     expect(() => buildCreature({ ...ids, arms: 'a2' }, partsData, weaponsData)).toThrow(/weapon/i);
+  });
+
+  it('devuelve las piezas en el orden exacto aunque partIds llegue desordenado', () => {
+    const unorderedIds = { legs: ids.legs, arms: ids.arms, torso: ids.torso, head: ids.head };
+    const c = buildCreature(unorderedIds, partsData, weaponsData);
+    expect(c.parts.map(({ slot }) => slot)).toEqual(['head', 'torso', 'arms', 'legs']);
+  });
+
+  it('lanza error claro si partIds es nulo o indefinido', () => {
+    expect(() => buildCreature(null, partsData, weaponsData)).toThrow('partIds is required');
+    expect(() => buildCreature(undefined, partsData, weaponsData)).toThrow('partIds is required');
+  });
+
+  it('lanza error si la pieza de arms no define weapon', () => {
+    expect(() => buildCreature({ ...ids, arms: 'a3' }, partsData, weaponsData))
+      .toThrow('Missing weapon for arms part: a3');
   });
 });

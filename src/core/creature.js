@@ -5,12 +5,16 @@ import { SLOTS } from './constants.js';
 import { computeStats } from './stats.js';
 
 /**
- * @param {{head: string, torso: string, arms: string, legs: string}} partIds
+ * @param {{head: string, torso: string, arms: string, legs: string}|null|undefined} partIds
  * @param {{parts: Array}} partsData content of data/parts.json
  * @param {Object} weaponsData content of data/weapons.json
  * @returns {{stats: Object, weapon: Object, parts: Array}}
  */
 export function buildCreature(partIds, partsData, weaponsData) {
+  if (partIds === null || partIds === undefined) {
+    throw new Error('partIds is required');
+  }
+
   const parts = SLOTS.map((slot) => {
     const partId = partIds[slot];
 
@@ -28,15 +32,21 @@ export function buildCreature(partIds, partsData, weaponsData) {
       throw new Error(`Part ${partId} belongs to slot ${part.slot}, not slot ${slot}`);
     }
 
-    return part;
+    return { ...part, mods: { ...(part.mods ?? {}) } };
   });
 
-  const weaponId = parts[SLOTS.indexOf('arms')].weapon;
+  const armsPart = parts[SLOTS.indexOf('arms')];
+  const weaponId = armsPart.weapon;
+
+  if (weaponId === undefined) {
+    throw new Error(`Missing weapon for arms part: ${armsPart.id}`);
+  }
+
   const weapon = weaponsData[weaponId];
 
   if (!weapon) {
     throw new Error(`Unknown weapon: ${weaponId}`);
   }
 
-  return { stats: computeStats(parts), weapon, parts };
+  return { stats: computeStats(parts), weapon: { ...weapon }, parts };
 }
