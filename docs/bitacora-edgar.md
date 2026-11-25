@@ -40,3 +40,12 @@ Resultado: 24 tests + lint + build en verde; PR edgar/build-creature
 Lo que aprendí: validar la frontera de entrada con mensajes concretos evita TypeError opacos y mantiene estable el contrato Lab -> Battle.
 Qué sigue: E3 `src/core/battle.js`.
 
+---
+## E3 damage, wind, turns y battle.js 2026-11-25
+Técnica de prompting: TDD con skill tdd-cycle (rojo, verde, refactor), subagente tdd-tester y revisión con @code-reviewer
+Prompts usados: 4 (plan de contrato, fase roja, fase verde y cierre de documentación)
+Qué falló o faltó: el subagente tdd-tester escribió los tests en rojo; en verde se corrigió la sincronización de `alive` vs `hp` en `advanceTurn`, y tras @code-reviewer se añadieron copias defensivas en `current` y `winner`.
+Qué cambié yo a mano: activé los tests, implementé `calcDamage`, `nextWind`, `TurnManager` y el orquestador puro `battle.js` con `buildCreature`, añadí `TURN.turnSeconds`, corregí el pase de `hp` según `alive` y documenté el contrato para BattleScene.
+Resultado: 51 tests en 7 suites + lint + build en verde y PR edgar/battle-core
+Lo que aprendí: un orquestador puro solo compone reglas ya probadas; cuando el estado tiene `alive` y `hp`, hay que convertir esa bandera antes de delegar al módulo que decide por vida.
+Qué sigue: E4 simulación headless de una pelea completa y entrega de contratos al equipo.

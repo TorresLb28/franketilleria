@@ -9,7 +9,7 @@ export const LIMITS = Object.freeze({
 
 export const SLOTS = Object.freeze(['head', 'torso', 'arms', 'legs']);
 
-export const TURN = Object.freeze({ moveSeconds: 8, maxWind: 10 });
+export const TURN = Object.freeze({ moveSeconds: 8, turnSeconds: 15, maxWind: 10 });
 
 // pixels per second = mobility * SPEED_FACTOR (100 mobility, 8 s -> 400 px)
 export const SPEED_FACTOR = 0.5;
