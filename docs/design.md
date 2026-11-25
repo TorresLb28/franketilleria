@@ -83,6 +83,26 @@ Cañón (parábola directa), Granada (rebota 2 veces), Rayo (casi recto, ignora 
 - `turns.js`: `TurnManager` (turno actual, avanzar, vivos, ganador, empate)
 - `wind.js`: `nextWind(rng)`
 
+### Orquestador `src/core/battle.js`
+
+`battle.js` agrupa las reglas puras del combate: no importa Phaser ni escenas, no usa estado global
+y siempre devuelve un estado nuevo. El estado contiene `combatants` (cada uno con `name`, `stats`,
+`weapon`, `parts`, `hp`, `maxHp`, `x`, `y` y `alive`), `rng`, `currentIndex`, `wind`, `phase`,
+`movementRemaining`, `turnRemaining`, `isOver`, `winner` e `isDraw`.
+
+| Función | Parámetros | Resultado |
+|---|---|---|
+| `createBattle` | `roster`, `partsData`, `weaponsData`, `{ rng }` | Construye cada combatiente con `buildCreature`; inicializa vida, posición, turno y temporizadores. |
+| `beginTurn` | `state` | Genera viento con `nextWind(state.rng)` y reinicia `movementRemaining` y `turnRemaining`. |
+| `moveCombatant` | `state`, `direction`, `deltaSeconds` | Desplaza en `x` al combatiente actual usando `stats.mobility * SPEED_FACTOR`, limitado por `movementRemaining`. |
+| `resolveExplosion` | `state`, `impactPoint` con `x` e `y` | Aplica `calcDamage` a todos los combatientes dentro del radio, incluido el atacante, y actualiza `hp` y `alive`. |
+| `advanceTurn` | `state` | Pasa al siguiente combatiente vivo con `TurnManager`; si queda uno, marca `winner`, y si no queda ninguno, marca `isDraw`. |
+
+`TURN.turnSeconds` vale 15 y está en `src/core/constants.js`, junto a `TURN.moveSeconds` y
+`TURN.maxWind`. Representa la duración de la fase de ataque: `movementRemaining` usa
+`TURN.moveSeconds` y `turnRemaining` usa `TURN.turnSeconds`. `BattleScene.js` debe leer esos
+valores del estado devuelto por `core` en lugar de duplicarlos.
+
 ## Contrato de funciones de core
 - `computeStats(parts)` devuelve `{ hp, mobility, resistance, damage }`.
 - `buildCreature(partIds, partsData, weaponsData)` devuelve `{ stats, weapon, parts }`.
