@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import partsData from '../../data/parts.json';
+import weaponsData from '../../data/weapons.json';
 import { SLOTS } from '../core/constants.js';
+import { computeStats } from '../core/stats.js';
 import { createCreatureView } from '../ui/creatureView.js';
 
 const COLORS = Object.freeze({
@@ -24,7 +26,14 @@ const LAYOUT = Object.freeze({
   creatureLabelY: 565,
   firstRowY: 210,
   rowSpacing: 100,
-  ready: Object.freeze({ x: 640, y: 665, width: 240, height: 54 })
+  ready: Object.freeze({ x: 640, y: 665, width: 240, height: 54 }),
+  statsPanel: Object.freeze({ x: 1005, y: 670, width: 450, height: 82 }),
+  statsText: Object.freeze({
+    weaponY: 648,
+    leftX: 880,
+    rightX: 1100,
+    rowY: Object.freeze([674, 698])
+  })
 });
 
 const SLOT_LABELS = Object.freeze({
@@ -54,6 +63,16 @@ function groupPartsBySlot(parts) {
   }
 
   return grouped;
+}
+
+function getWeaponName(armsPart) {
+  const weapon = weaponsData[armsPart.weapon];
+
+  if (!weapon) {
+    throw new Error(`Unknown weapon: ${armsPart.weapon}`);
+  }
+
+  return weapon.name;
 }
 
 function createButton(scene, { x, y, width, height, label, fill, hoverFill, textColor, fontSize }, onClick) {
@@ -104,6 +123,7 @@ export class LabScene extends Phaser.Scene {
 
     this.drawPanels();
     this.drawRows();
+    this.drawStatsPanel();
     this.drawReadyButton();
     this.showCurrentPlayer();
 
@@ -186,6 +206,30 @@ export class LabScene extends Phaser.Scene {
     }
   }
 
+  drawStatsPanel() {
+    const { statsPanel, statsText } = LAYOUT;
+
+    this.add.rectangle(
+      statsPanel.x, statsPanel.y, statsPanel.width, statsPanel.height, COLORS.panel
+    ).setStrokeStyle(2, COLORS.border);
+
+    this.weaponText = this.add.text(statsPanel.x, statsText.weaponY, '', {
+      fontFamily: 'Arial',
+      fontSize: '17px',
+      color: '#f5e663'
+    }).setOrigin(0.5);
+
+    const style = { fontFamily: 'Arial', fontSize: '16px', color: COLORS.text };
+    const [firstRowY, secondRowY] = statsText.rowY;
+
+    this.statTexts = {
+      hp: this.add.text(statsText.leftX, firstRowY, '', style).setOrigin(0.5),
+      mobility: this.add.text(statsText.rightX, firstRowY, '', style).setOrigin(0.5),
+      resistance: this.add.text(statsText.leftX, secondRowY, '', style).setOrigin(0.5),
+      damage: this.add.text(statsText.rightX, secondRowY, '', style).setOrigin(0.5)
+    };
+  }
+
   drawReadyButton() {
     const { background, label } = createButton(this, {
       ...LAYOUT.ready,
@@ -200,13 +244,27 @@ export class LabScene extends Phaser.Scene {
     this.readyLabel = label;
   }
 
+  getSelectedParts() {
+    return SLOTS.map((slot) => this.partsBySlot[slot][this.selectedIndices[slot]]);
+  }
+
   drawCreature() {
     this.creatureView?.destroy();
 
-    const parts = SLOTS.map((slot) => this.partsBySlot[slot][this.selectedIndices[slot]]);
     const { x, y, scale } = LAYOUT.creature;
 
-    this.creatureView = createCreatureView(this, parts, x, y, scale);
+    this.creatureView = createCreatureView(this, this.getSelectedParts(), x, y, scale);
+  }
+
+  updateStatsPanel() {
+    const stats = computeStats(this.getSelectedParts());
+    const arms = this.partsBySlot.arms[this.selectedIndices.arms];
+
+    this.weaponText.setText(`Arma: ${getWeaponName(arms)}`);
+    this.statTexts.hp.setText(`Vida: ${Math.round(stats.hp)}`);
+    this.statTexts.mobility.setText(`Movilidad: ${Math.round(stats.mobility)}`);
+    this.statTexts.resistance.setText(`Resistencia: ${Math.round(stats.resistance * 100)}%`);
+    this.statTexts.damage.setText(`Daño: x${stats.damage.toFixed(2)}`);
   }
 
   showCurrentPlayer() {
@@ -221,6 +279,7 @@ export class LabScene extends Phaser.Scene {
     }
 
     this.drawCreature();
+    this.updateStatsPanel();
   }
 
   confirmSelection() {
@@ -257,6 +316,7 @@ export class LabScene extends Phaser.Scene {
 
     this.updateRow(slot);
     this.drawCreature();
+    this.updateStatsPanel();
   }
 
   getPartIds(player = this.currentPlayer) {
