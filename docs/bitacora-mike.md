@@ -50,3 +50,15 @@ Qué cambié yo a mano: Revisé los diffs en VS Code y probé el laboratorio en 
 Resultado: `src/ui/creatureView.js` y `src/scenes/LabScene.js` listos con refinamiento iterativo #1 (A2 → A3) y bloqueante resuelto; lint, pruebas (53/53) y build en verde; PR `mike/lab-selection`
 Lo que aprendí: Apilar piezas en un `Container` desde el centro de los pies y separar la vista de `LabScene` permite reutilizar `createCreatureView` y `setFacing` en el combate sin duplicar lógica, y revisar con un subagente ayuda a detectar a tiempo contratos incompletos entre escenas.
 Qué sigue: M4 panel de estadísticas en el Laboratorio.
+
+---
+
+## M4 Panel de estadísticas 2026-11-25
+
+Técnica de prompting: contexto y restricciones, con formato de refinamiento iterativo
+Prompts usados: 1 (Build)
+Qué falló o faltó: Se me olvidó correr las pruebas (`npm test`); en lo funcional el panel mostró Vida, Movilidad, Resistencia en porcentaje, Daño como multiplicador y el nombre del arma actualizándose en tiempo real desde la primera ejecución.
+Qué cambié yo a mano: Nada; solo probé cambiar partes en el navegador y comparé los valores mostrados contra el cálculo manual.
+Resultado: Panel de estadísticas y nombre del arma integrados en `src/scenes/LabScene.js` usando `computeStats` y `data/weapons.json`; lint y build en verde (pruebas pendientes de correr); PR `mike/lab-stats`
+Lo que aprendí: Delegar el cálculo de estadísticas a `computeStats` en `core` mantiene `LabScene.js` enfocada solo en la interfaz y evita duplicar reglas del juego, además de que no debo olvidar correr `npm test` como parte de la verificación.
+Qué sigue: M5 flujo de 2 jugadores hacia el Combate.
