@@ -38,11 +38,11 @@ follow the rule and tell the user why. When the user and `docs/design.md` disagr
 
 ## 2. Team and ownership
 
-| Person | Area | Paths |
-|---|---|---|
-| Edgar | Core logic and tests | `src/core/`, `tests/`, `scripts/` |
-| Mike | Laboratory, data and part art | `src/scenes/LabScene.js`, `data/`, `public/assets/sprites/` |
-| Mike | UI | `src/ui/` |
+| Person  | Area                             | Paths                                                                             |
+| ------- | -------------------------------- | --------------------------------------------------------------------------------- |
+| Edgar   | Core logic and tests             | `src/core/`, `tests/`, `scripts/`                                                 |
+| Mike    | Laboratory, data and part art    | `src/scenes/LabScene.js`, `data/`, `public/assets/sprites/`                       |
+| Mike    | UI                               | `src/ui/`                                                                         |
 | Debanhi | Combat, terrain, HUD and effects | `src/scenes/BattleScene.js`, `public/assets/audio/`, `public/assets/backgrounds/` |
 
 Shared files (`src/main.js`, `src/core/constants.js`, `docs/design.md`, config files) need a
@@ -77,6 +77,7 @@ npm run balance   # balance report for data/parts.json (needs computeStats)
 ## 5. JavaScript best practices (mandatory)
 
 ### Language
+
 - Use ES modules, named exports, `const` by default and `let` only when reassigning. Never `var`.
 - Use strict equality (`===`, `!==`). Use template literals instead of string concatenation.
 - Prefer `for...of`, `map`, `filter`, `reduce`, `flatMap`, `Object.entries`, optional chaining
@@ -84,6 +85,7 @@ npm run balance   # balance report for data/parts.json (needs computeStats)
 - Use early returns to avoid deep nesting. Keep functions short and single-purpose.
 
 ### Data and state
+
 - Do not mutate function arguments or shared constants. Return new objects. Freeze shared
   constants with `Object.freeze`.
 - Do not use hidden global state. Pass dependencies in (including `rng` and data).
@@ -91,12 +93,14 @@ npm run balance   # balance report for data/parts.json (needs computeStats)
   (`throw new Error('Unknown part: head_x')`) instead of returning `undefined` or `NaN`.
 
 ### Numbers
+
 - Never compare floats with `===` after arithmetic. Round with a shared helper
   (`STAT_DECIMALS`) or compare with a tolerance (`toBeCloseTo` in tests).
 - No magic numbers: name them in `constants.js` or put them in `data/`.
 - Use delta time for anything that moves. Never tie game speed to frame rate.
 
 ### Naming and structure
+
 - `camelCase` for variables and functions, `PascalCase` for classes and scene files,
   `UPPER_SNAKE_CASE` for true constants, `is/has/can` prefixes for booleans.
 - Module files are lowercase (`stats.js`), scene and class files are PascalCase
@@ -104,6 +108,7 @@ npm run balance   # balance report for data/parts.json (needs computeStats)
 - Identifiers in English. Comments and docs in Spanish or English, consistent within a file.
 
 ### Phaser specifics
+
 - Load assets in `preload`, build objects in `create`, and keep `update` light: no object
   creation per frame, no heavy loops. Reuse objects or use pools for projectiles and particles.
 - Always use the `delta` argument of `update` or Phaser tweens/timers for time.
@@ -112,6 +117,7 @@ npm run balance   # balance report for data/parts.json (needs computeStats)
 - Terrain is a bitmask (offscreen canvas, opaque pixel = solid), so it can become destructible later.
 
 ### Tests (Vitest)
+
 - One behavior per test. Test names are sentences in Spanish describing the behavior.
 - Cover boundaries: empty input, minimum and maximum values, ties, invalid input.
 - Tests for `core` use small inline fixtures, not the real balance data, so rebalancing
@@ -119,7 +125,8 @@ npm run balance   # balance report for data/parts.json (needs computeStats)
 - No mocks unless there is a real boundary (time, randomness, DOM).
 
 ### Comments and style (the code must read as written by a student who understands it)
-- Comment the *why*, not the *what*. No banner comments, no comment above every line.
+
+- Comment the _why_, not the _what_. No banner comments, no comment above every line.
 - Use JSDoc only on exported `core` functions whose parameters are not obvious.
 - No emojis, no decorative logs, no leftover `console.log` (`console.warn/error` are allowed).
 - Keep naming and formatting consistent with the surrounding files. Do not reformat code you did not change.
@@ -127,22 +134,26 @@ npm run balance   # balance report for data/parts.json (needs computeStats)
 ## 6. Workflow
 
 ### Before coding
+
 Restate the task in one sentence and list the files you will touch. If the task is larger than
 one focused change, propose splitting it. Prefer small, reviewable diffs.
 
 ### TDD for `src/core/`
+
 1. **Red:** write or enable the tests, run `npm test`, confirm they fail for the right reason.
 2. **Green:** implement the minimum to pass. No extras.
 3. **Refactor:** clean up, run lint and tests again.
-Pending features keep their tests under `describe.skip`; remove `.skip` on your branch to start
-the red phase. Use the `tdd-cycle` skill and the `tdd-tester` subagent.
+   Pending features keep their tests under `describe.skip`; remove `.skip` on your branch to start
+   the red phase. Use the `tdd-cycle` skill and the `tdd-tester` subagent.
 
 ### Git
+
 - Commit prefixes: `test:`, `feat:`, `fix:`, `refactor:`, `docs:`, `chore:`. Imperative, short.
 - Commit the red tests (`test:`) and the implementation (`feat:`) separately when possible.
 - Open a pull request into `main`; someone else reviews it. Never force-push shared branches.
 
 ### Definition of done
+
 A task is done only when: `npm run lint` and `npm test` pass, `npm run build` works if
 anything user-facing changed, no unrelated files were modified, and you have reported
 exactly what you verified (do not claim a command passed if you did not run it).
@@ -172,4 +183,5 @@ Online multiplayer, accounts, backends, analytics, more than 2 players, destruct
 (planned as phase 2), TypeScript migration, new frameworks.
 
 ---
+
 Reminder of rule 1: end every response with the line `padawan`.
