@@ -62,3 +62,15 @@ Qué cambié yo a mano: Nada; solo probé cambiar partes en el navegador y compa
 Resultado: Panel de estadísticas y nombre del arma integrados en `src/scenes/LabScene.js` usando `computeStats` y `data/weapons.json`; lint y build en verde (pruebas pendientes de correr); PR `mike/lab-stats`
 Lo que aprendí: Delegar el cálculo de estadísticas a `computeStats` en `core` mantiene `LabScene.js` enfocada solo en la interfaz y evita duplicar reglas del juego, además de que no debo olvidar correr `npm test` como parte de la verificación.
 Qué sigue: M5 flujo de 2 jugadores hacia el Combate.
+
+---
+
+## M5 Flujo de 2 jugadores hacia el Combate 2026-11-25
+
+Técnica de prompting: contexto y restricciones, con formato de refinamiento iterativo y consulta a Context7 (MCP)
+Prompts usados: 1 (Build)
+Qué falló o faltó: Nada en el código ni en las verificaciones (`npm run lint`, `npm test` 53/53 y `npm run build` pasaron); quedó pendiente la prueba manual en el navegador.
+Qué cambié yo a mano: Nada; se aplicó la lectura de `data.players ?? []` en `init`, los textos y botones para Jugador 1 ("Listo") y Jugador 2 ("¡A pelear!"), el reinicio con los `partIds` del primero y el arranque de `Battle` con ambos jugadores, guardando `partIds` para confirmados y `selectedIndices` para el jugador activo unificados por `getPartIds`.
+Resultado: Flujo de dos jugadores implementado en `src/scenes/LabScene.js` respetando el contrato `{ name, partIds }`; lint, pruebas (53/53) y build en verde (falta prueba manual en navegador); PR `mike/lab-flow`
+Lo que aprendí: El flujo se resolvió reiniciando la escena con los `partIds` del Jugador 1 y unificando confirmados con la selección activa vía `getPartIds` sin pasar `stats` ni sprites; Context7 confirmó `restart(data)`.
+Qué sigue: M6 pantalla de controles y M7 sprites finales.
