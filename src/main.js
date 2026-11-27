@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { BootScene } from './scenes/BootScene.js';
+import { ControlsScene } from './scenes/ControlsScene.js';
 import { LabScene } from './scenes/LabScene.js';
 import { BattleScene } from './scenes/BattleScene.js';
 
@@ -11,5 +12,5 @@ new Phaser.Game({
   pixelArt: true,
   backgroundColor: '#14101f',
   scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-  scene: [BootScene, LabScene, BattleScene]
+  scene: [BootScene, ControlsScene, LabScene, BattleScene]
 });
