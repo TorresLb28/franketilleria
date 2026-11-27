@@ -70,3 +70,18 @@ export function createCreatureView(scene, parts, x, y, scale = 1) {
 
   return scene.add.container(x, y, children).setScale(scale);
 }
+
+export function setFacing(view, direction) {
+  if (direction !== 1 && direction !== -1) {
+    throw new Error('direction must be 1 or -1');
+  }
+
+  if (typeof view?.setScale !== 'function') {
+    throw new Error('view must be a Phaser Container');
+  }
+
+  const scaleX = Math.abs(view.scaleX ?? 1);
+  const scaleY = Math.abs(view.scaleY ?? 1);
+
+  return view.setScale(direction * scaleX, scaleY);
+}
