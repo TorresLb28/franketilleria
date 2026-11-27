@@ -74,3 +74,17 @@ Qué cambié yo a mano: Nada; se aplicó la lectura de `data.players ?? []` en `
 Resultado: Flujo de dos jugadores implementado en `src/scenes/LabScene.js` respetando el contrato `{ name, partIds }`; lint, pruebas (53/53) y build en verde (falta prueba manual en navegador); PR `mike/lab-flow`
 Lo que aprendí: El flujo se resolvió reiniciando la escena con los `partIds` del Jugador 1 y unificando confirmados con la selección activa vía `getPartIds` sin pasar `stats` ni sprites; Context7 confirmó `restart(data)`.
 Qué sigue: M6 pantalla de controles y M7 sprites finales.
+
+---
+
+## M6 Pantalla de controles 2026-11-26
+
+Técnica de prompting: contexto y restricciones, con formato de refinamiento iterativo
+Prompts usados: 1 (Build)
+Qué falló o faltó: Nada; se creó `ControlsScene.js`, se registró en `main.js`, `BootScene` redirige a `"Controls"`, el avance con clic o Enter hacia `"Lab"` funcionó, y la validación con gente externa confirmó que los controles se entienden sin ayuda.
+Qué cambié yo a mano: Nada en el código; solo probé el flujo completo en el navegador y le pedí a personas externas que leyeran la pantalla para verificar que se entendiera.
+Resultado: Pantalla de controles implementada en `src/scenes/ControlsScene.js` y conectada en `src/main.js` y `src/scenes/BootScene.js`; lint y build en verde; PR `mike/controls-screen`
+Lo que aprendí: Presentar las reglas de movimiento (8 s), ataque (15 s), viento y condición de victoria en textos breves y claros permite que alguien sin contexto entienda cómo jugar de inmediato.
+Qué sigue: M7 sprites finales y carga de texturas.
+
+---
