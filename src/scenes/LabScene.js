@@ -61,7 +61,7 @@ function createButton(scene, { x, y, width, height, label, fill, hoverFill, text
     .setStrokeStyle(2, COLORS.border)
     .setInteractive({ useHandCursor: true });
 
-  scene.add.text(x, y, label, {
+  const labelText = scene.add.text(x, y, label, {
     fontFamily: 'Arial',
     fontSize: fontSize ?? '26px',
     color: textColor ?? COLORS.text
@@ -71,7 +71,7 @@ function createButton(scene, { x, y, width, height, label, fill, hoverFill, text
   background.on('pointerout', () => background.setFillStyle(fill));
   background.on('pointerdown', onClick);
 
-  return background;
+  return { background, label: labelText };
 }
 
 export class LabScene extends Phaser.Scene {
@@ -79,10 +79,25 @@ export class LabScene extends Phaser.Scene {
     super('Lab');
   }
 
+  get currentPlayer() {
+    return this.players[this.currentPlayerIndex];
+  }
+
+  get isLastPlayer() {
+    return this.currentPlayerIndex === this.players.length - 1;
+  }
+
+  get selectedIndices() {
+    return this.currentPlayer.selectedIndices;
+  }
+
   create() {
-    this.playerName = 'Jugador 1';
     this.partsBySlot = groupPartsBySlot(partsData.parts);
-    this.selectedIndices = Object.fromEntries(SLOTS.map((slot) => [slot, 0]));
+    this.players = ['Jugador 1', 'Jugador 2'].map((name) => ({
+      name,
+      selectedIndices: Object.fromEntries(SLOTS.map((slot) => [slot, 0]))
+    }));
+    this.currentPlayerIndex = 0;
     this.rows = {};
     this.buttons = [];
     this.creatureView = null;
@@ -90,11 +105,7 @@ export class LabScene extends Phaser.Scene {
     this.drawPanels();
     this.drawRows();
     this.drawReadyButton();
-    this.drawCreature();
-
-    for (const slot of SLOTS) {
-      this.updateRow(slot);
-    }
+    this.showCurrentPlayer();
 
     this.events.once('shutdown', () => {
       for (const button of this.buttons) {
@@ -116,13 +127,13 @@ export class LabScene extends Phaser.Scene {
       ).setStrokeStyle(2, COLORS.border);
     }
 
-    this.add.text(640, LAYOUT.titleY, `Laboratorio de Víctor · ${this.playerName}`, {
+    this.titleText = this.add.text(640, LAYOUT.titleY, '', {
       fontFamily: 'Arial',
       fontSize: '40px',
       color: COLORS.text
     }).setOrigin(0.5);
 
-    this.add.text(640, LAYOUT.subtitleY, 'Elige las piezas de tu criatura', {
+    this.subtitleText = this.add.text(640, LAYOUT.subtitleY, '', {
       fontFamily: 'Arial',
       fontSize: '22px',
       color: COLORS.text
@@ -163,12 +174,12 @@ export class LabScene extends Phaser.Scene {
       const previous = createButton(this, {
         x: 955, y, width: 48, height: 48, label: '◀',
         fill: COLORS.panel, hoverFill: COLORS.border
-      }, () => this.changePart(slot, -1));
+      }, () => this.changePart(slot, -1)).background;
 
       const next = createButton(this, {
         x: 1200, y, width: 48, height: 48, label: '▶',
         fill: COLORS.panel, hoverFill: COLORS.border
-      }, () => this.changePart(slot, 1));
+      }, () => this.changePart(slot, 1)).background;
 
       this.buttons.push(previous, next);
       this.rows[slot] = { name, counter };
@@ -176,16 +187,17 @@ export class LabScene extends Phaser.Scene {
   }
 
   drawReadyButton() {
-    const button = createButton(this, {
+    const { background, label } = createButton(this, {
       ...LAYOUT.ready,
-      label: 'Listo',
+      label: '',
       fill: COLORS.button,
       hoverFill: COLORS.buttonHover,
       textColor: '#14101f',
       fontSize: '24px'
-    }, () => console.warn('Selección:', this.getPartIds()));
+    }, () => this.confirmSelection());
 
-    this.buttons.push(button);
+    this.buttons.push(background);
+    this.readyLabel = label;
   }
 
   drawCreature() {
@@ -195,6 +207,35 @@ export class LabScene extends Phaser.Scene {
     const { x, y, scale } = LAYOUT.creature;
 
     this.creatureView = createCreatureView(this, parts, x, y, scale);
+  }
+
+  showCurrentPlayer() {
+    this.titleText.setText(`Laboratorio de Víctor · ${this.currentPlayer.name}`);
+    this.subtitleText.setText(this.isLastPlayer
+      ? 'Elige las piezas de tu criatura y pulsa Pelear'
+      : 'Elige las piezas de tu criatura y pulsa Continuar');
+    this.readyLabel.setText(this.isLastPlayer ? 'Pelear' : 'Continuar');
+
+    for (const slot of SLOTS) {
+      this.updateRow(slot);
+    }
+
+    this.drawCreature();
+  }
+
+  confirmSelection() {
+    if (!this.isLastPlayer) {
+      this.currentPlayerIndex += 1;
+      this.showCurrentPlayer();
+      return;
+    }
+
+    this.scene.start('Battle', {
+      players: this.players.map((player) => ({
+        name: player.name,
+        partIds: this.getPartIds(player)
+      }))
+    });
   }
 
   updateRow(slot) {
@@ -209,7 +250,7 @@ export class LabScene extends Phaser.Scene {
     const count = this.partsBySlot[slot].length;
     const current = this.selectedIndices[slot];
 
-    this.selectedIndices = {
+    this.currentPlayer.selectedIndices = {
       ...this.selectedIndices,
       [slot]: (current + step + count) % count
     };
@@ -218,10 +259,10 @@ export class LabScene extends Phaser.Scene {
     this.drawCreature();
   }
 
-  getPartIds() {
+  getPartIds(player = this.currentPlayer) {
     return Object.fromEntries(SLOTS.map((slot) => [
       slot,
-      this.partsBySlot[slot][this.selectedIndices[slot]].id
+      this.partsBySlot[slot][player.selectedIndices[slot]].id
     ]));
   }
 }
