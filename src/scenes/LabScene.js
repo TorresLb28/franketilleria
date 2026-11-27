@@ -96,6 +96,23 @@ function createButton(scene, { x, y, width, height, label, fill, hoverFill, text
 export class LabScene extends Phaser.Scene {
   constructor() {
     super('Lab');
+    this.confirmedPlayers = [];
+  }
+
+  init(data) {
+    const players = data?.players ?? [];
+
+    if (!Array.isArray(players) || players.length > 1) {
+      throw new Error('Lab accepts zero or one confirmed player');
+    }
+
+    this.confirmedPlayers = players.map((player) => {
+      if (typeof player?.name !== 'string' || player.partIds === null || typeof player.partIds !== 'object') {
+        throw new Error('Invalid confirmed player');
+      }
+
+      return { name: player.name, partIds: { ...player.partIds } };
+    });
   }
 
   get currentPlayer() {
@@ -103,7 +120,7 @@ export class LabScene extends Phaser.Scene {
   }
 
   get isLastPlayer() {
-    return this.currentPlayerIndex === this.players.length - 1;
+    return this.confirmedPlayers.length === 1;
   }
 
   get selectedIndices() {
@@ -112,11 +129,16 @@ export class LabScene extends Phaser.Scene {
 
   create() {
     this.partsBySlot = groupPartsBySlot(partsData.parts);
-    this.players = ['Jugador 1', 'Jugador 2'].map((name) => ({
-      name,
-      selectedIndices: Object.fromEntries(SLOTS.map((slot) => [slot, 0]))
-    }));
-    this.currentPlayerIndex = 0;
+    const playerNumber = this.confirmedPlayers.length + 1;
+
+    this.players = [
+      ...this.confirmedPlayers,
+      {
+        name: `Jugador ${playerNumber}`,
+        selectedIndices: Object.fromEntries(SLOTS.map((slot) => [slot, 0]))
+      }
+    ];
+    this.currentPlayerIndex = this.confirmedPlayers.length;
     this.rows = {};
     this.buttons = [];
     this.creatureView = null;
@@ -270,9 +292,9 @@ export class LabScene extends Phaser.Scene {
   showCurrentPlayer() {
     this.titleText.setText(`Laboratorio de Víctor · ${this.currentPlayer.name}`);
     this.subtitleText.setText(this.isLastPlayer
-      ? 'Elige las piezas de tu criatura y pulsa Pelear'
-      : 'Elige las piezas de tu criatura y pulsa Continuar');
-    this.readyLabel.setText(this.isLastPlayer ? 'Pelear' : 'Continuar');
+      ? 'Elige las piezas de tu criatura y pulsa ¡A pelear!'
+      : 'Elige las piezas de tu criatura y pulsa Listo');
+    this.readyLabel.setText(this.isLastPlayer ? '¡A pelear!' : 'Listo');
 
     for (const slot of SLOTS) {
       this.updateRow(slot);
@@ -284,8 +306,14 @@ export class LabScene extends Phaser.Scene {
 
   confirmSelection() {
     if (!this.isLastPlayer) {
-      this.currentPlayerIndex += 1;
-      this.showCurrentPlayer();
+      this.scene.restart({
+        players: [
+          {
+            name: this.currentPlayer.name,
+            partIds: this.getPartIds()
+          }
+        ]
+      });
       return;
     }
 
@@ -320,6 +348,10 @@ export class LabScene extends Phaser.Scene {
   }
 
   getPartIds(player = this.currentPlayer) {
+    if (player.partIds) {
+      return { ...player.partIds };
+    }
+
     return Object.fromEntries(SLOTS.map((slot) => [
       slot,
       this.partsBySlot[slot][player.selectedIndices[slot]].id
